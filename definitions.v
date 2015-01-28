@@ -1,4 +1,6 @@
 Require Import Arith.
+Require Import List.
+
 
 Definition var := nat.
 
@@ -41,6 +43,16 @@ Fixpoint locally_closed_at_rec (k : nat) (t : trm) : Prop :=
 
 Definition locally_closed (t:trm) : Prop := locally_closed_at_rec 0 t.
 
+Fixpoint free_variables (t:trm) : list var :=
+   match t with
+    | trm_bvar i    => nil
+    | trm_fvar x    => x :: nil
+    | trm_app t1 t2 => (free_variables t1)++(free_variables t2)
+    | trm_abs t1    => (free_variables t1)
+  end.
+
+Definition fresh (x:var) (t:trm) : Prop :=
+  ~(In x (free_variables t)).
 
 Lemma lc_at_app:
   forall c:nat, forall t1:trm, forall t2:trm, locally_closed_at_rec c (trm_app t1 t2) -> (locally_closed_at_rec c t1) /\ (locally_closed_at_rec c t2).
@@ -51,8 +63,9 @@ Proof.
 Qed.
 
 
+
 Lemma close_open_var :
-  forall t:trm, forall k:nat, exists u:var, (close_var_rec k u (open_rec k u t)) = t.
+  forall t:trm, forall k:nat, exists u:var, fresh u t -> (close_var_rec k u (open_rec k u t)) = t.
 Proof.
   intros.
   induction t.
