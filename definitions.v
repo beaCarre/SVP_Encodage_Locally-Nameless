@@ -54,6 +54,59 @@ Fixpoint free_variables (t:trm) : list var :=
 Definition fresh (x:var) (t:trm) : Prop :=
   ~(In x (free_variables t)).
 
+Definition closed (t:trm) : Prop :=
+  (free_variables t) = nil.
+
+Lemma open_var_fv:
+  forall x:var, forall t:trm,  incl (free_variables (open t x)) (x::(free_variables t)).
+Proof.
+ intros.
+ unfold incl.
+ intro.
+ induction t.
+ simpl.
+ unfold open.
+ unfold open_rec.
+ induction n.
+ simpl.
+ intro. 
+ exact H.
+ simpl.
+ right.
+ exact H.
+ simpl.
+ right.
+ exact H.
+ simpl. 
+ intro. 
+ right.
+ apply in_app_or in H.
+ unfold open in IHt1.
+ unfold open in IHt2.
+ destruct H.
+ apply IHt1 in H.
+ apply in_or_app.
+ left.
+ apply in_cons.
+
+ inversion H.
+ rewrite H0 in H.
+ 
+ 
+ simpl.
+ 
+ apply in_cons with (a:=x) in H .
+ 
+
+Qed.
+
+Lemma close_var_fv:
+  forall x:var, forall t:trm,  incl (free_variables (close_var x t)) (x (free_variables t)).
+Proof.
+
+
+Qed.
+
 Lemma lc_at_app:
   forall c:nat, forall t1:trm, forall t2:trm, locally_closed_at_rec c (trm_app t1 t2) -> (locally_closed_at_rec c t1) /\ (locally_closed_at_rec c t2).
 Proof.
@@ -64,6 +117,8 @@ Qed.
 
 
 
+
+
 Lemma close_open_var :
   forall t:trm, forall k:nat, exists u:var, fresh u t -> (close_var_rec k u (open_rec k u t)) = t.
 Proof.
@@ -71,78 +126,6 @@ Proof.
   induction t.
   - induction k.
     
-    
-  (*   induction n. *)
-  (*   case (n=0). *)
-  (*   simpl. *)
-  (*   assert (forall u0:var, beq_nat u0 u0 = true).   *)
-  (*   intros. *)
-  (*   induction u0.  *)
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   exact IHu0. *)
-    
-
-
-    
-  (*   induction k. *)
-  (*   simpl. *)
-  (*   induction n. *)
-  (*   simpl. *)
-  (*   assert (forall u:var, beq_nat u u = true).   *)
-  (*   intros. *)
-  (*   induction u0.  *)
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   exact IHu0. *)
-  (*   rewrite H. *)
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   reflexivity. *)
-  (*   induction n. *)
-  (*   simpl. *)
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   simpl. *)
-
-
-
-
-
-
-
-
-  (*   induction t. *)
-  (*   induction u. *)
-  (*   induction n.  *)
-  (* -simpl. *)
-  (*  simpl. *)
-  (*  reflexivity. *)
-  (* - simpl. *)
-  (*   reflexivity. *)
-  (* - destruct n. *)
-  (*   simpl. *)
-  (*   assert (forall u:var, beq_nat u u = true).   *)
-  (*   intros. *)
-  (*   induction u0. *)
-    
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   exact IHu0. *)
-  (*   rewrite H. *)
-  (*   reflexivity. *)
-  (*   simpl. *)
-  (*   reflexivity.     *)
-  (* -  *)
-
-
-  (*   simpl close_var_rec. *)
-  (*   induction v. *)
-  (*   induction u. *)
-  (*   simpl. *)
-  (*   simpl      *)
-
-
 
 Qed.
 
@@ -150,50 +133,6 @@ Lemma open_close_var :
   forall u:var, forall t:trm, (open_rec 0 u (close_var_rec 0 u t)) = t.
 Proof.
   intros.
-  
-Qed.
-
-
-
-Lemma lc_from_lc_at:
-  forall c:nat, forall t:trm, locally_closed_at_rec 0 t -> locally_closed c t.
-Proof.
-(*   intros. *)
-(*   induction c. *)
-(*   exact H. *)
-(*   induction t. *)
-(*   unfold locally_closed_rec in IHc. *)
-(*   compute. *)
-(*   assert (S n < S c). *)
-(*   apply lt_n_S. *)
-(*   exact IHc. *)
-(*   apply lt_le_weak. *)
-(*   exact H0. *)
-(* - compute. *)
-(*   reflexivity. *)
-(* - simpl in H. *)
-(*   simpl in IHc. *)
-(*   simpl. *)
-(*   split. *)
-(*   apply IHt1. *)
-(*   elim H. *)
-(*   intros. *)
-(*   exact H0. *)
-(*   elim IHc. *)
-(*   intros. *)
-(*   exact H0. *)
-(*    apply IHt2. *)
-(*   elim H. *)
-(*   intros. *)
-(*   exact H1. *)
-(*   elim IHc. *)
-(*   intros. *)
-(*   exact H1. *)
-(* -  *)
-  
-  
-  
-  
   
 Qed.
 
