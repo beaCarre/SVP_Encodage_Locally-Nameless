@@ -237,18 +237,18 @@ Lemma remove_cons:
 Proof.
   intros.
   induction l1.
-  - simpl. 
+   simpl. 
     reflexivity.
-  - induction l2.
-    * simpl.
+   induction l2.
+     simpl.
       remember (eq_nat_dec x a) as cond.
       simpl in IHl1.
       rewrite IHl1.
       induction cond.
-      + reflexivity.
-      + simpl.
+       reflexivity.
+       simpl.
         reflexivity.
-    * simpl.
+     simpl.
       remember (eq_nat_dec x a) as cond1.
       induction cond1. 
       Admitted.
@@ -270,27 +270,26 @@ Lemma close_var_fv:
 Proof.
   intros.
   induction t.
-  - simpl.
+   simpl.
     reflexivity.
     
-  - unfold close_var.
+   unfold close_var.
     simpl.
     remember (eq_nat_dec x v) as e. 
     induction e.
-    * simpl. 
+     simpl. 
       reflexivity.
-    * simpl.
+     simpl.
       reflexivity.
 
-  - simpl.
+   simpl.
     rewrite remove_cons.
     inversion IHt1.
     inversion IHt2.
     unfold close_var.
     reflexivity.
-
-  - 
-
+ 
+    Admitted.
 
 
 
@@ -310,91 +309,91 @@ Lemma subst_lc :
   forall (t:trm) (u:trm) (x:var) (k:nat),
     locally_closed_at_rec k t /\ locally_closed_at_rec k u -> locally_closed_at_rec k (subst x u t).
 Proof.
-(*   intros t u x. *)
-(*   induction t. *)
+  intros t u x.
+  induction t.
 
-(*   simpl. *)
-(*   intros. *)
-(*   elim H. *)
-(*   intros. *)
-(*   exact H0. *)
-(*   unfold subst. *)
-(*   simpl. *)
-(*   intros.   *)
-(*   destruct (eq_nat_dec x v). *)
-(*   elim H. *)
-(*   intros. *)
-(*   exact H1. *)
-(*   simpl. *)
-(*   reflexivity. *)
+  simpl.
+  intros.
+  elim H.
+  intros.
+  exact H0.
+  unfold subst.
+  simpl.
+  intros.
+  destruct (eq_nat_dec x v).
+  elim H.
+  intros.
+  exact H1.
+  simpl.
+  reflexivity.
   
-(*   intros. *)
-(*   simpl. *)
+  intros.
+  simpl.
 
-(*   simpl in H. *)
-(*   elim H. *)
-(*   intros. *)
-(*   elim H0. *)
-(*   intros. *)
-(*   split. *)
-(*   apply IHt1. *)
-(*   split. *)
-(*   exact H2. *)
-(*   exact H1. *)
-(*   apply IHt2. *)
-(*   split. *)
-(*   exact H3. *)
-(*   exact H1. *)
-  (* induction u. *)
-  
-  (* simpl. *)
-  (* intros. *)
-  (* apply IHt.  *)
-  (* elim H. *)
-  (* intros. *)
-  (* split. *)
-  (* exact H0. *)
-  (* simpl. *)
-  (* SearchPattern ( _ < S _ ). *)
-  (* apply lt_S. *)
-  (* exact H1. *)
-  
-  (* intros. *)
-  (* simpl. *)
-  (* apply IHt. *)
-  (* split. *)
-  (* elim H. *)
-  (* intros. *)
-  (* simpl in *. *)
-  (* exact H0. *)
-  (* elim H. *)
-  (* intros. *)
-  (* simpl in *. *)
-  (* reflexivity. *)
+  simpl in H.
+  elim H.
+  intros.
+  elim H0.
+  intros.
+  split.
+  apply IHt1.
+  split.
+  exact H2.
+  exact H1.
+  apply IHt2.
+  split.
+  exact H3.
+  exact H1.
 
-  (* simpl in *. *)
-  (* intros. *)
-  (* apply IHt.   *)
-  (* split. *)
-  (* elim H. *)
-  (* intros. *)
-  (* exact H0. *)
-  (* simpl. *)
-  (* split. *)
-  (* elim H. *)
-  (* simpl in *. *)
-  (* intros.   *)
-  (* elim H1. *)
-  (* intros. *)
+  induction u.
+  
+  simpl.
+  intros.
+  apply IHt.
+  elim H.
+  intros.
+  split.
+  exact H0.
+  simpl.
+  SearchPattern ( _ < S _ ).
+  apply lt_S.
+  exact H1.
+  
+  intros.
+  simpl.
+  apply IHt.
+  split.
+  elim H.
+  intros.
+  simpl in *.
+  exact H0.
+  elim H.
+  intros.
+  simpl in *.
+  reflexivity.
+
+  simpl in *.
+  intros.
+  apply IHt.
+  split.
+  elim H.
+  intros.
+  exact H0.
+  simpl.
+  split.
+  elim H.
+  simpl in *.
+  intros.
+  elim H1.
+  intros.
   Admitted.
-
 
 
 Lemma subst_open_var : 
   forall (x:var) (y:var) (u:trm) (t:trm), forall (k:nat),
     x <> y -> locally_closed_at_rec k u -> subst x u (open_rec k x t) = open_rec k y (subst x u t).
 Proof. 
-  Admitted.
+Admitted.
 
 
 
@@ -403,7 +402,36 @@ Proof.
 Lemma subst_close_var : 
   forall (x:var) (y:var) (u:trm) (t:trm), forall (k:nat),
     x <> y -> fresh k u -> subst x u (close_var_rec k x t) = close_var_rec k y (subst x u t).
-Proof. 
+Proof.
+  unfold fresh.
+  induction t.
+  
+  intros.
+  simpl.
+  reflexivity.
+  
+  intros.
+  simpl.
+  destruct (eq_nat_dec x v).
+  simpl.
+
+  induction u.
+  simpl.
+
   Admitted.
 
+
+
+Lemma subst_fresh : 
+  forall (x:var) (t:trm) (u:trm),
+    fresh x t -> subst x u t = t.
+Proof.
+  intros.
+  induction t.
+  simpl.
+  reflexivity.
+  unfold fresh in H.
+  simpl in H.
+  simpl.
+  Admitted.
 
