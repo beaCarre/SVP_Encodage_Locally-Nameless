@@ -190,16 +190,12 @@ Lemma open_var_fv:
   forall x:var, forall t:trm, forall k:nat, incl (free_variables (open_rec k x t)) (x::(free_variables t)).
 Proof.
   intros x t.
-  
-
-
   induction t.
   simpl.
   intro k.
   destruct (eq_nat_dec k n).
   simpl.
-  SearchPattern (incl _ _ ).
-
+  (*SearchPattern (incl _ _ ).*)
   apply incl_refl.
   simpl.
   apply incl_nil.
@@ -228,7 +224,9 @@ Qed.
 Fixpoint remove_var (x:var) (l:list var) : list var :=
   match l with
   | nil => nil
-  | h::tl => if (eq_nat_dec x h) then remove_var x tl else h::(remove_var x tl) 
+  | h::tl => if (eq_nat_dec x h) then 
+               remove_var x tl else 
+               h::(remove_var x tl) 
   end.
 
 Lemma remove_cons:
@@ -252,7 +250,6 @@ Proof.
       remember (eq_nat_dec x a) as cond1.
       induction cond1. 
       Admitted.
-
 
 
 Lemma fv_abs:
@@ -290,10 +287,6 @@ Proof.
     reflexivity.
  
     Admitted.
-
-
-
-
 
 
 Fixpoint subst (x:var) (u:trm) (t:trm) : trm :=
@@ -355,7 +348,7 @@ Proof.
   split.
   exact H0.
   simpl.
-  SearchPattern ( _ < S _ ).
+  (*SearchPattern ( _ < S _ ).*)
   apply lt_S.
   exact H1.
   
@@ -396,30 +389,24 @@ Proof.
 Admitted.
 
 
-
-
-
 Lemma subst_close_var : 
   forall (x:var) (y:var) (u:trm) (t:trm), forall (k:nat),
-    x <> y -> fresh k u -> subst x u (close_var_rec k x t) = close_var_rec k y (subst x u t).
+    x <> y -> 
+    fresh k u -> 
+    subst x u (close_var_rec k x t) = close_var_rec k y (subst x u t).
 Proof.
   unfold fresh.
-  induction t.
-  
+  induction t.  
   intros.
   simpl.
-  reflexivity.
-  
+  reflexivity.  
   intros.
   simpl.
   destruct (eq_nat_dec x v).
   simpl.
-
   induction u.
   simpl.
-
   Admitted.
-
 
 
 Lemma subst_fresh : 
@@ -434,4 +421,3 @@ Proof.
   simpl in H.
   simpl.
   Admitted.
-
